@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 // Update the cached copy of the words in the adapter.
                 adapter.setWords(words);
             }
+
         });
 
         adapter.setOnItemClickListener(new WordListAdapter.OnItemClickListener() {
@@ -82,7 +83,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, EDIT_WORD_ACTIVITY_REQUEST_CODE);
             }
         });
+        //eliminar
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                Toast.makeText(MainActivity.this, "on Move", Toast.LENGTH_SHORT).show();
+                return false;
+            }
 
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                mWordViewModel.delete(adapter.getWordAt(viewHolder.getAdapterPosition()));
+                Toast.makeText(MainActivity.this, "on Swiped to delete ", Toast.LENGTH_SHORT).show();
+                adapter.notifyDataSetChanged();
+            }
+        }).attachToRecyclerView(recyclerView);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
