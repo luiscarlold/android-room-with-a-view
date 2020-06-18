@@ -17,10 +17,13 @@ package com.example.android.roomwordssample;
  */
 
 import android.content.Context;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -28,6 +31,7 @@ import java.util.List;
 
 
 public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
+    private OnItemClickListener listener;
 
     class WordViewHolder extends RecyclerView.ViewHolder {
         private final TextView wordItemView;
@@ -35,8 +39,27 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
         private WordViewHolder(View itemView) {
             super(itemView);
             wordItemView = itemView.findViewById(R.id.textView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(mWords.get(position));
+                    }
+                }
+            });
         }
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(Word word);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
 
     private final LayoutInflater mInflater;
     private List<Word> mWords = Collections.emptyList(); // Cached copy of words
@@ -60,6 +83,10 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
     void setWords(List<Word> words) {
         mWords = words;
         notifyDataSetChanged();
+    }
+
+    public Word getWordAt(int position) {
+        return mWords.get(position);
     }
 
     @Override
